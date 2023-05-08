@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "billboard"
+version = "0.0.1"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "beautifulsoup4==4.12.2",
+    "pandas==2.0.1",
+    "requests==2.30.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+[project.optional-dependencies]
+tests = [
+  "pytest",
+  "black",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/jandolezal/billboard"
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+combine_as_imports = true
