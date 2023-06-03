@@ -1,9 +1,11 @@
-import requests
-from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+from prefect import task
 
 
+@task
 def scrape_billboard():
     # Set the URL of the Wikipedia page
     url = "https://en.wikipedia.org/wiki/Billboard_Year-End_Hot_100_singles_of_"
@@ -48,6 +50,7 @@ def scrape_billboard():
     return df
 
 
+@task
 def clean_billboard(df):
     cleaned_df = df.dropna(subset=["title"])
 

@@ -1,16 +1,20 @@
-import pandas as pd
+from prefect import flow
 
-from .scraper import scrape_billboard, clean_billboard
 from .database import write_to_database
+from .scraper import clean_billboard, scrape_billboard
 
 
-def run():
+@flow
+def get_hot_singles():
     # Scrape the Billboard Year-End Hot 100 singles from Wikipedia
-    df = scrape_billboard().pipe(clean_billboard)
+    scraped_songs = scrape_billboard()
+
+    # Clean and prepare for writing to database
+    cleaned_songs = clean_billboard(scraped_songs)
 
     # Write the data to the SQLite database
-    write_to_database(df, "billboard.db")
+    write_to_database(cleaned_songs, "billboard.db")
 
 
 if __name__ == "__main__":
-    run()
+    get_hot_singles()
