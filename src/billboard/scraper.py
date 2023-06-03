@@ -2,21 +2,27 @@ import numpy as np
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-from prefect import task
+from prefect import get_run_logger, task
+from tqdm import tqdm
+
+BILLBOARD_WIKIPEDIA_URL = (
+    "https://en.wikipedia.org/wiki/Billboard_Year-End_Hot_100_singles_of_"
+)
 
 
 @task
-def scrape_billboard():
+def scrape_billboard(url: str, start_year: int, end_year: int) -> pd.DataFrame:
+    logger = get_run_logger()
+
     # Set the URL of the Wikipedia page
-    url = "https://en.wikipedia.org/wiki/Billboard_Year-End_Hot_100_singles_of_"
 
     cols = ["year", "rank", "title", "artist"]
 
     # Create an empty DataFrame to store the data
     df = pd.DataFrame(columns=cols)
 
-    # Loop over the years from 1960 to 2020
-    for year in range(1960, 2023):
+    # Loop over the years
+    for year in tqdm(range(start_year, end_year + 1)):
         # Make a GET request to the Wikipedia page for the current year
         response = requests.get(url + str(year))
 
@@ -47,6 +53,7 @@ def scrape_billboard():
         # Make a dataframe from the single year songs and concat to the whole dataframe
         df = pd.concat([df, pd.DataFrame(L, columns=cols)], ignore_index=True)
 
+    logger.info(f"Scraped years {start_year}-{end_year}")
     return df
 
 
