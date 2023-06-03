@@ -51,14 +51,14 @@ def scrape_billboard():
 def clean_billboard(df):
     cleaned_df = df.dropna(subset=["title"])
 
-    # Fix rank
-    cleaned_df.loc[~cleaned_df["rank"].str.isnumeric()] = np.nan
+    # Fix rank (there can be value "Tie" and not a number)
+    cleaned_df.loc[~cleaned_df["rank"].str.isnumeric(), "rank"] = np.nan
     cleaned_df["rank"] = cleaned_df["rank"].fillna(method="ffill").astype("int")
 
     # Fix song title
     cleaned_df["title"] = cleaned_df["title"].str.strip('"')
 
     # Fix year
-    cleaned_df["year"] = cleaned_df["year"].str.strip().astype("int")
+    cleaned_df["year"] = cleaned_df["year"].astype("int")
 
     return cleaned_df
