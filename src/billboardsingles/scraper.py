@@ -54,6 +54,9 @@ def scrape_billboard(url: str, start_year: int, end_year: int) -> pd.DataFrame:
         df = pd.concat([df, pd.DataFrame(L, columns=cols)], ignore_index=True)
 
     logger.info(f"Scraped years {start_year}-{end_year}")
+
+    df["lyrics"] = pd.NA
+
     return df
 
 

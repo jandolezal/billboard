@@ -58,7 +58,7 @@ docker==6.1.3
     # via prefect
 exceptiongroup==1.1.1
     # via anyio
-fastapi==0.95.2
+fastapi==0.96.0
     # via prefect
 fsspec==2023.5.0
     # via prefect
@@ -154,6 +154,8 @@ python-dateutil==2.8.2
     #   kubernetes
     #   pandas
     #   pendulum
+python-dotenv==1.0.0
+    # via -r requirements.in
 python-slugify==8.0.1
     # via prefect
 pytz==2023.3
@@ -170,7 +172,7 @@ pyyaml==6.0
     #   prefect
 readchar==4.0.5
     # via prefect
-regex==2023.5.5
+regex==2023.6.3
     # via dateparser
 requests==2.31.0
     # via
@@ -210,6 +212,8 @@ text-unidecode==1.3
     # via python-slugify
 toml==0.10.2
     # via prefect
+tqdm==4.65.0
+    # via -r requirements.in
 typer==0.9.0
     # via prefect
 typing-extensions==4.6.3

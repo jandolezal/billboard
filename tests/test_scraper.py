@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-from billboard.scraper import scrape_billboard
+from billboardsingles.scraper import scrape_billboard
 
 
 @pytest.mark.skip(reason="Prevent scraping wikipedia.com")
