@@ -7,6 +7,7 @@ from prefect import flow
 from .database import write_to_database
 from .genius import get_lyrics, update_database
 from .scraper import BILLBOARD_WIKIPEDIA_URL, clean_billboard, scrape_billboard
+from .summarize import summarize_lyrics
 
 load_dotenv()
 
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     if sys.argv[1] == "wiki":
         get_hot_singles(BILLBOARD_WIKIPEDIA_URL, 1960, 2022, SQLITE_DATABASE)
 
-    if sys.argv[1] == "genius":
+    elif sys.argv[1] == "genius":
         try:
             start_rowid = int(sys.argv[2])
         except IndexError:
@@ -51,3 +52,10 @@ if __name__ == "__main__":
         get_genius_lyrics(
             SQLITE_DATABASE, os.getenv("GENIUS_ACCESS_TOKEN"), start_rowid, end_rowid
         )
+
+    elif sys.argv[1] == "openai":
+        try:
+            year = int(sys.argv[2])
+            summarize_lyrics(year, SQLITE_DATABASE)
+        except ValueError:
+            print("Select a year between 1960 and 2022")
