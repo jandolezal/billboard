@@ -35,6 +35,12 @@ def get_genius_lyrics(db_path, genius_access_token, start_rowid, end_rowid):
     update_database(lyrics, db_path)
 
 
+@flow
+def get_summaries(db_path, year_from, year_to):
+    for year in range(year_from, year_to + 1):
+        summarize_lyrics(year, SQLITE_DATABASE)
+
+
 if __name__ == "__main__":
     if sys.argv[1] == "wiki":
         get_hot_singles(BILLBOARD_WIKIPEDIA_URL, 1960, 2022, SQLITE_DATABASE)
@@ -55,7 +61,8 @@ if __name__ == "__main__":
 
     elif sys.argv[1] == "openai":
         try:
-            year = int(sys.argv[2])
-            summarize_lyrics(year, SQLITE_DATABASE)
+            year_from = int(sys.argv[2])
+            year_to = int(sys.argv[3])
         except ValueError:
             print("Select a year between 1960 and 2022")
+        get_summaries(SQLITE_DATABASE, year_from, year_to)
