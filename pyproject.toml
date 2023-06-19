@@ -5,17 +5,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "billboardsingles"
-version = "0.0.1"
+version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
     "beautifulsoup4==4.12.2",
     "openai==0.27.8",
     "pandas==2.0.2",
+    "plotly==5.15.0",
     "python-dotenv==1.0.0",
     "prefect==2.10.12",
     "requests==2.31.0",
+    "streamlit==1.23.1",
     "tqdm==4.65",
+    "wordcloud==1.9.2",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
