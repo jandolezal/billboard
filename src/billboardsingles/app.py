@@ -61,7 +61,7 @@ st.markdown(
 
 # Load data
 data = load_data(
-    query="SELECT year, rank, artist, title, meaning FROM `storied-pixel-390317.billboard.songs` WHERE meaning IS NOT NULL;"
+    query="SELECT year, rank, artist, title, meaning FROM `storied-pixel-390317.billboard.songs` WHERE meaning IS NOT NULL ORDER BY year, rank;"
 )
 
 
