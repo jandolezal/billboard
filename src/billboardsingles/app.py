@@ -6,18 +6,26 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+from google.cloud import bigquery
+from google.oauth2 import service_account
 from wordcloud import WordCloud
 
-SQLITE_DATABASE = "billboard.db"
+# https://docs.streamlit.io/knowledge-base/tutorials/databases/bigquery
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"]
+)
+client = bigquery.Client(credentials=credentials)
 
 
 @st.cache_data
-def load_data(db):
-    conn = sqlite3.connect(db)
-    df = pd.read_sql_query(
-        "SELECT year, rank, artist, title, meaning FROM songs WHERE meaning IS NOT NULL",
-        conn,
-    ).assign(
+def load_data(query):
+    # https://docs.streamlit.io/knowledge-base/tutorials/databases/bigquery
+    query_job = client.query(query)
+    rows_raw = query_job.result()
+
+    rows = [dict(row) for row in rows_raw]
+
+    df = pd.DataFrame(rows).assign(
         meaning=lambda d: d["meaning"]
         .astype("string")
         .str.lower()
@@ -29,7 +37,7 @@ def load_data(db):
 
 @st.cache_data
 def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    # https://docs.streamlit.io/library/api-reference/widgets/st.download_button
     return df.to_csv(index_label="rowid").encode("utf-8")
 
 
@@ -52,7 +60,9 @@ st.markdown(
 
 
 # Load data
-data = load_data(SQLITE_DATABASE)
+data = load_data(
+    query="SELECT year, rank, artist, title, meaning FROM `storied-pixel-390317.billboard.songs` WHERE meaning IS NOT NULL;"
+)
 
 
 # Select a year
