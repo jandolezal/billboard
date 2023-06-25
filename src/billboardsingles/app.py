@@ -115,6 +115,47 @@ st.dataframe(
 )
 
 
+# TOP themes for year
+@st.cache_data
+def get_themes_for_year(data, selected_themes):
+    fig = px.bar(
+        data.loc[
+            (data["year"] == selected_year) & (data["meaning"].isin(selected_themes)),
+            "meaning",
+        ].value_counts(ascending=False),
+        x="count",
+        orientation="h",
+        labels={"count": "Number of occurences", "meaning": "Main theme"},
+    )
+    return fig
+
+
+@st.cache_data
+def get_themes_counts_for_year(data, selected_year):
+    return (
+        data.loc[data["year"] == selected_year, "meaning"]
+        .value_counts(ascending=False)
+        .index.unique()
+        .tolist()
+    )
+
+
+st.header("TOP themes for year")
+
+possible_themes = get_themes_counts_for_year(data, selected_year)
+
+selected_themes = st.multiselect(
+    label="Select themes to display",
+    options=possible_themes,
+    default=possible_themes[:10],
+    help="Choose which themes should be included in the visualisations below",
+)
+
+fig = get_themes_for_year(data, selected_themes)
+st.plotly_chart(fig)
+
+
+# TOP 5 themes accross years
 st.header("TOP 5 themes accross years")
 top5_themes = data["meaning"].value_counts(ascending=False).index[:5]
 
