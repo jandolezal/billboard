@@ -1,3 +1,7 @@
+"""Get list of Billboard year-end hot 100 singles from Wikipedia."""
+
+import sqlite3
+
 import numpy as np
 import pandas as pd
 import requests
@@ -11,7 +15,7 @@ BILLBOARD_WIKIPEDIA_URL = (
 
 
 @task
-def scrape_billboard(url: str, start_year: int, end_year: int) -> pd.DataFrame:
+def scrape(url: str, start_year: int, end_year: int) -> pd.DataFrame:
     logger = get_run_logger()
 
     # Set the URL of the Wikipedia page
@@ -46,7 +50,10 @@ def scrape_billboard(url: str, start_year: int, end_year: int) -> pd.DataFrame:
             # Extract the rank, title, and artist from the cells
             rank = cells[0].text.strip()
             title = cells[1].text.strip()
-            artist = cells[2].text.strip()
+            try:
+                artist = cells[2].text.strip()
+            except IndexError as e:
+                pass # use artist from previous iteration. likely merged table cell vertically
 
             L.append([year, rank, title, artist])
 
@@ -56,12 +63,13 @@ def scrape_billboard(url: str, start_year: int, end_year: int) -> pd.DataFrame:
     logger.info(f"Scraped years {start_year}-{end_year}")
 
     df["lyrics"] = pd.NA
+    df["meaning"] = pd.NA
 
     return df
 
 
 @task
-def clean_billboard(df):
+def clean(df):
     cleaned_df = df.dropna(subset=["title"])
 
     # Fix rank (there can be value "Tie" and not a number)
@@ -75,3 +83,18 @@ def clean_billboard(df):
     cleaned_df["year"] = cleaned_df["year"].astype("int")
 
     return cleaned_df
+
+
+@task
+def save(df, db_path):
+    logger = get_run_logger()
+    # Create a connection to the SQLite database
+    conn = sqlite3.connect(db_path)
+
+    # Write the DataFrame to the database
+    df.to_sql("songs", conn, if_exists="replace", index=False)
+
+    logger.info(f"{df.shape[0]} songs saved to {db_path}")
+
+    # Close the connection
+    conn.close()

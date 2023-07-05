@@ -1,4 +1,3 @@
-import sqlite3
 import string
 
 import matplotlib.pyplot as plt
@@ -71,7 +70,7 @@ selected_year = st.slider(
     min_value=int(data["year"].min()),
     max_value=int(data["year"].max()),
     step=1,
-    value=1980,
+    value=2022,
     help="Select a year which interests you",
 )
 
@@ -166,8 +165,6 @@ top5 = (
     .rename_axis(columns="Main theme")
 )
 
-# st.dataframe(top5)
-# st.line_chart(top5)
 fig = px.line(top5, labels={"value": "Number of occurences", "year": "Year"})
 
 st.plotly_chart(fig)

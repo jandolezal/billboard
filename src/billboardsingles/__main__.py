@@ -4,26 +4,25 @@ import sys
 from dotenv import load_dotenv
 from prefect import flow
 
-from .database import write_to_database
+from .closedai import summarize_lyrics
 from .genius import get_lyrics, update_database
-from .scraper import BILLBOARD_WIKIPEDIA_URL, clean_billboard, scrape_billboard
-from .summarize import summarize_lyrics
+from .wiki import BILLBOARD_WIKIPEDIA_URL, clean, save, scrape
 
 load_dotenv()
 
-SQLITE_DATABASE = "billboard.db"
+SQLITE_DATABASE = "billboardsingles.db"
 
 
 @flow
 def get_hot_singles(url: str, start_year: int, end_year: int, db_path: str) -> None:
     # Scrape the Billboard Year-End Hot 100 singles from Wikipedia
-    scraped_songs = scrape_billboard(url, start_year, end_year)
+    scraped_songs = scrape(url, start_year, end_year)
 
     # Clean and prepare for writing to database
-    cleaned_songs = clean_billboard(scraped_songs)
+    cleaned_songs = clean(scraped_songs)
 
     # Write the data to the SQLite database
-    write_to_database(cleaned_songs, db_path)
+    save(cleaned_songs, db_path)
 
 
 @flow
