@@ -1,3 +1,5 @@
+"""Get songs lyrics from Genius"""
+
 import re
 import sqlite3
 from typing import Dict
@@ -8,7 +10,7 @@ from prefect import get_run_logger, task
 from tqdm import tqdm
 
 
-# TODO: Some lyrics are scraped only in part
+# TODO: Some lyrics are scraped only in part. Find alternative source.
 @task
 def get_lyrics(
     db_path: str, access_token: str, start_rowid: int, end_rowid: int

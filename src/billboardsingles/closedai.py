@@ -1,3 +1,5 @@
+"""Use OpenAI API to summarize meaning of each lyrics using just one word."""
+
 import os
 import re
 import sqlite3
