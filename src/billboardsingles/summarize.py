@@ -27,29 +27,31 @@ def summarize_lyrics(year: int, db: str) -> None:
     for row in rows:
         id_ = row[0]
         lyrics = remove_square_brackets(row[1])
-
-        prompt = f"Q: What is the main theme of this song in one word?\n\n{lyrics}\nA:"
-        try:
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=prompt,
-                temperature=0,
-                max_tokens=100,
-                top_p=1,
-                frequency_penalty=0.0,
-                presence_penalty=0.0,
-                stop=["\n"],
+        if len(lyrics) < 2000:  # unusually long lyrics are likely not lyrics
+            prompt = (
+                f"Q: What is the main theme of this song in one word?\n\n{lyrics}\nA:"
             )
-        except openai.error.InvalidRequestError as e:
-            print(e)
-            continue
+            try:
+                response = openai.Completion.create(
+                    model="text-davinci-003",
+                    prompt=prompt,
+                    temperature=0,
+                    max_tokens=100,
+                    top_p=1,
+                    frequency_penalty=0.0,
+                    presence_penalty=0.0,
+                    stop=["\n"],
+                )
+            except openai.error.InvalidRequestError as e:
+                print(e)
+                continue
 
-        meaning = response["choices"][0]["text"].strip().lower()
+            meaning = response["choices"][0]["text"].strip().lower()
 
-        cur = conn.cursor()
-        cur.execute("UPDATE songs SET meaning = ? WHERE rowid = ?", (meaning, id_))
-        print(id_, meaning)
-        conn.commit()
+            cur = conn.cursor()
+            cur.execute("UPDATE songs SET meaning = ? WHERE rowid = ?", (meaning, id_))
+            print(id_, meaning)
+            conn.commit()
 
 
 if __name__ == "__main__":
