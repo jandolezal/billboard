@@ -163,3 +163,4 @@ cython_debug/
 *.db
 .streamlit/
 storied-pixel*.json
+data/songs.csv
